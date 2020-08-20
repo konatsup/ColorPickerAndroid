@@ -64,6 +64,25 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-        }
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_main, menu)
+        return true
     }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.camera -> {
+                Intent(MediaStore.ACTION_IMAGE_CAPTURE).resolveActivity(packageManager)?.let {
+                    if (checkCameraPermission()) {
+                        takePicture()
+                    } else {
+                        grantCameraPermission()
+                    }
+                } ?: Toast.makeText(this, "カメラを扱うアプリがありません", Toast.LENGTH_LONG).show()
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+        return true
+    }
+
 }
