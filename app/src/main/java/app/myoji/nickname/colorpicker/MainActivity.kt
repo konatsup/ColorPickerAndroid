@@ -12,6 +12,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 
 class MainActivity : AppCompatActivity() {
+    @SuppressLint("ClickableViewAccessibility", "SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -23,39 +24,45 @@ class MainActivity : AppCompatActivity() {
             val bitmap = Bitmap.createBitmap(image.drawable.toBitmap())
 
             // ImageViewの横幅をBitmapの大きさに合わせて正規化する
-            val ratio = bitmap.width.toFloat() / image.width.toFloat()
+            val ratio =
+                if (bitmap.width >= bitmap.height) {
+                    bitmap.width.toFloat() / image.width.toFloat()
+                } else {
+                    bitmap.width.toFloat() / image.width.toFloat()
+                }
 
             // タップしているポジションx, yを取得
-            var x = (motionEvent.x * ratio).toInt()
-            var y = (motionEvent.y * ratio).toInt()
+            val x = (motionEvent.x * ratio).toInt()
+            val y = (motionEvent.y * ratio).toInt()
 
             /*
              画像の最小または最大サイズをx, yが超える場合はエラーで落ちてしまうので
-             上限, 下限の値を入れるようにする
+             黒色を取得したとして処理する
              */
-            if (x < 0) {
-                x = 0
-            } else if (x > bitmap.width - 1) {
-                x = bitmap.width - 1
-            }
-
-            if (y < 0) {
-                y = 0
-            } else if (y > bitmap.height - 1) {
-                y = bitmap.height - 1
+            if (x < 0 || x > bitmap.width - 1 || y < 0 || y > bitmap.height - 1) {
+                val blackColor = Color.parseColor("#000000")
+                rgbTextView.text = "(0, 0, 0)"
+                rgbTextView.setTextColor(blackColor)
+                codeTextView.text = "#000000"
+                codeTextView.setTextColor(blackColor)
+                colorView.setBackgroundColor(blackColor)
+                return@setOnTouchListener true
             }
 
             // bitmap(画像本体)のx,yの地点のpixel情報を取得
             val pixel = bitmap.getPixel(x, y)
             // textViewにRGBの値をsetTextする
-            textView.text = "(${pixel.red}, ${pixel.green}, ${pixel.blue})"
+            rgbTextView.text = "(${pixel.red}, ${pixel.green}, ${pixel.blue})"
             // pixelが色情報を持っているため、文字や背景の色をpixelと同じにする
-            textView.setTextColor(pixel)
+            rgbTextView.setTextColor(pixel)
             colorView.setBackgroundColor(pixel)
-            // positionを表示
-            positionTextView.text = "x: $x, y: $y"
+            // カラーコードをsetTextする
+            codeTextView.text = String.format("#%06X", (0xFFFFFF and pixel))
+            codeTextView.setTextColor(pixel)
 
             true
+        }
+    }
 
         }
     }
