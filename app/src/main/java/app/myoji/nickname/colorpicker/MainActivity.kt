@@ -52,6 +52,12 @@ class MainActivity : AppCompatActivity() {
             val x = (motionEvent.x * ratio).toInt()
             val y = (motionEvent.y * ratio).toInt()
 
+            val left = motionEvent.x.toInt()
+            val top = motionEvent.y.toInt()
+            val right = (motionEvent.x + pickerView.width).toInt()
+            val bottom = (motionEvent.y + pickerView.height).toInt()
+            pickerView.layout(left, top, right, bottom)
+
             /*
              画像の最小または最大サイズをx, yが超える場合はエラーで落ちてしまうので
              黒色を取得したとして処理する
