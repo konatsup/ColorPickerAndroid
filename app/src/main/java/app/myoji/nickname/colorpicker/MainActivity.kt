@@ -52,12 +52,6 @@ class MainActivity : AppCompatActivity() {
             val x = (motionEvent.x * ratio).toInt()
             val y = (motionEvent.y * ratio).toInt()
 
-            val left = motionEvent.x.toInt()
-            val top = motionEvent.y.toInt()
-            val right = (motionEvent.x + pickerView.width).toInt()
-            val bottom = (motionEvent.y + pickerView.height).toInt()
-            pickerView.layout(left, top, right, bottom)
-
             /*
              画像の最小または最大サイズをx, yが超える場合はエラーで落ちてしまうので
              黒色を取得したとして処理する
@@ -83,8 +77,27 @@ class MainActivity : AppCompatActivity() {
             codeTextView.text = String.format("#%06X", (0xFFFFFF and pixel))
             codeTextView.setTextColor(pixel)
 
+            // ピッカーの色と位置を変更
+            pickerView.setBackgroundColor(pixel)
+            changePickerViewPosition(motionEvent.x, motionEvent.y)
+
             true
         }
+    }
+
+    private fun changePickerViewPosition(x: Float, y: Float) {
+        // どれだけずらすかの値 (微調整必要)
+        val offsetX: Int = 30
+        val offsetY: Int = -80
+
+        // pickerの各頂点の位置を指定
+        val left = x.toInt() + offsetX
+        val top = y.toInt() + offsetY
+        val right = (x + pickerView.width).toInt() + offsetX
+        val bottom = (y + pickerView.height).toInt() + offsetY
+
+        // 指定した位置に配置する
+        pickerView.layout(left, top, right, bottom)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
