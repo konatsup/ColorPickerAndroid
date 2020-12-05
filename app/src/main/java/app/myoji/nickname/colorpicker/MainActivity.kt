@@ -29,6 +29,8 @@ class MainActivity : AppCompatActivity() {
         const val CAMERA_PERMISSION_REQUEST_CODE = 2
     }
 
+    var isNightMode = false
+
     @SuppressLint("ClickableViewAccessibility", "SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -96,6 +98,14 @@ class MainActivity : AppCompatActivity() {
                         grantCameraPermission()
                     }
                 } ?: Toast.makeText(this, "カメラを扱うアプリがありません", Toast.LENGTH_LONG).show()
+            }
+            R.id.changeColor -> {
+                isNightMode = !isNightMode
+                if (isNightMode) {
+                    bottomContainer.setBackgroundColor(Color.parseColor("#292929"))
+                } else {
+                    bottomContainer.setBackgroundColor(Color.parseColor("#ffffff"))
+                }
             }
             else -> super.onOptionsItemSelected(item)
         }
